@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
 
 function generateRandomString() {
   let s = '';
@@ -11,9 +13,19 @@ function generateRandomString() {
 // set ejs as the view engine
 app.set("view engine", "ejs");
 
+// global urls object
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
+};
+
+// global users object
+const users = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
+  },
 };
 
 // middleware from body-parser library that converts the request body from a Buffer into string that can be read
@@ -38,9 +50,14 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+// render registration page
+app.get("/urls/register", (req, res) => {
+  res.render("registration");
+});
+
 // route for /urls to render urls ejs template in views folder
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
   res.render("urls_index", templateVars);
 });
 
@@ -50,33 +67,49 @@ app.get("/urls", (req, res) => {
 // when the form is submitted, it will make a request to POST /urls, and the body will contain one URL-encoded name-value pair with the name longURL
 // data in the input field will be avaialbe to us in the req.body.longURL variable, which we can store in our urlDatabase object
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = { username: req.cookies["username"] }
+  res.render("urls_new", templateVars);
 });
 
 // add route to render urls_show.ejs template
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], username: req.cookies["username"] };
   res.render("urls_show", templateVars);
 });
 
 // Redirect any request to "/u/:id" to its longURL
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
-  console.log(longURL)
   res.redirect(longURL);
 });
 
 // route that genearte short id and adds to urlDatabase, longURL must start with http://
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
   const id = generateRandomString();
   urlDatabase[id] = req.body.longURL;
-  console.log(urlDatabase);
   res.redirect(`/urls/${id}`);
 });
 
 // deletes url
 app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id];
+  res.redirect("/urls");
+});
+
+// update url
+app.post("/urls/:id", (req, res) => {
+  urlDatabase[req.params.id] = req.body.updateURL;
+  res.redirect("/urls");
+});
+
+// set name of cookie to username in login page
+app.post("/login", (req, res) => {
+  res.cookie("username", req.body.username);
+  res.redirect("/urls");
+});
+
+// add registration info to users object
+app.post("/register", (req, res) => {
+  res.cookie("username", req.body.username);
   res.redirect("/urls");
 });
