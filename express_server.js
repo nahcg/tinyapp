@@ -108,6 +108,12 @@ app.post("/login", (req, res) => {
   res.redirect("/urls");
 });
 
+// logout endpoint, clears cookie
+app.post("/logout", (req, res) => {
+  res.clearCookie("username");
+  res.redirect("/urls");
+});
+
 // add registration info to users object
 app.post("/register", (req, res) => {
   res.cookie("username", req.body.username);
