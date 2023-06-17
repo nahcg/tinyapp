@@ -20,13 +20,7 @@ const urlDatabase = {
 };
 
 // global users object
-const users = {
-  userRandomID: {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur",
-  },
-};
+const users = { };
 
 // middleware from body-parser library that converts the request body from a Buffer into string that can be read
 app.use(express.urlencoded({ extended: true }));
@@ -52,12 +46,15 @@ app.get("/hello", (req, res) => {
 
 // render registration page
 app.get("/urls/register", (req, res) => {
-  res.render("registration");
+  var id = req.cookies["username"];
+  const templateVars = { user: users[id] };
+  res.render("registration", templateVars);
 });
 
 // route for /urls to render urls ejs template in views folder
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  var id = req.cookies["username"];
+  const templateVars = { urls: urlDatabase, user: users[id] };
   res.render("urls_index", templateVars);
 });
 
@@ -67,13 +64,15 @@ app.get("/urls", (req, res) => {
 // when the form is submitted, it will make a request to POST /urls, and the body will contain one URL-encoded name-value pair with the name longURL
 // data in the input field will be avaialbe to us in the req.body.longURL variable, which we can store in our urlDatabase object
 app.get("/urls/new", (req, res) => {
-  const templateVars = { username: req.cookies["username"] }
+  var id = req.cookies["username"];
+  const templateVars = { user: users[id] };
   res.render("urls_new", templateVars);
 });
 
 // add route to render urls_show.ejs template
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], username: req.cookies["username"] };
+  var id = req.cookies["username"];
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], user: users[id] };
   res.render("urls_show", templateVars);
 });
 
@@ -116,6 +115,10 @@ app.post("/logout", (req, res) => {
 
 // add registration info to users object
 app.post("/register", (req, res) => {
-  res.cookie("username", req.body.username);
+  let id = generateRandomString();
+  users[id] = { id: id };
+  users[id].email = req.body.email;
+  users[id].password = req.body.password;
+  res.cookie("username", id);
   res.redirect("/urls");
 });
