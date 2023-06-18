@@ -22,6 +22,15 @@ const urlDatabase = {
 // global users object
 const users = { };
 
+// return user object using email or null if user missing
+const findUser = function(email) {
+  if (users.id.email) {
+    return users.id;
+  } else {
+    return null;
+  }
+};
+
 // middleware from body-parser library that converts the request body from a Buffer into string that can be read
 app.use(express.urlencoded({ extended: true }));
 
@@ -119,6 +128,7 @@ app.post("/register", (req, res) => {
   users[id] = { id: id };
   users[id].email = req.body.email;
   users[id].password = req.body.password;
+  return findUser()
   res.cookie("username", id);
   res.redirect("/urls");
 });
