@@ -103,12 +103,11 @@ app.post("/urls/:id", (req, res) => {
 // set name of cookie to username in login page
 app.post("/login", (req, res) => {
   const user = findUserObj(req.body.email, users);
-  console.log(user)
   if (user && (req.body.password === user.password)) {
     res.cookie("username", user.id);
     res.redirect('/urls');
   } else {
-    console.log('Please make sure you enter the correct username and password.');
+    return res.status(403).send('Please enter the correct username and password.');
   }
 });
 
@@ -131,9 +130,9 @@ app.post("/register", (req, res) => {
       res.cookie("username", id);
       res.redirect("/urls");
     } else {
-      console.log('Email already registered');
+      return res.status(400).send('Email already registered');
     }
   } else {
-    console.log('Empty username or password');
+    return res.status(400).send('Empty username or password');
   }
 });
