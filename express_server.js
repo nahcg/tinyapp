@@ -4,11 +4,7 @@ const PORT = 8080; // default port 8080
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
-function generateRandomString() {
-  let s = '';
-  s += Math.random().toString(36).slice(2);
-  return s.slice(0, 6);
-}
+const { generateRandomString, findUserObj, findEmail } = require('./helpers');
 
 // set ejs as the view engine
 app.set("view engine", "ejs");
@@ -21,15 +17,6 @@ const urlDatabase = {
 
 // global users object
 const users = { };
-
-// return user object using email or null if user missing
-const findUser = function(email) {
-  if (users.id.email) {
-    return users.id;
-  } else {
-    return null;
-  }
-};
 
 // middleware from body-parser library that converts the request body from a Buffer into string that can be read
 app.use(express.urlencoded({ extended: true }));
@@ -54,10 +41,17 @@ app.get("/hello", (req, res) => {
 });
 
 // render registration page
-app.get("/urls/register", (req, res) => {
+app.get("/register", (req, res) => {
   var id = req.cookies["username"];
   const templateVars = { user: users[id] };
   res.render("registration", templateVars);
+});
+
+// render login page
+app.get("/login", (req, res) => {
+  var id = req.cookies["username"];
+  const templateVars = { user: users[id] };
+  res.render("login", templateVars);
 });
 
 // route for /urls to render urls ejs template in views folder
@@ -67,11 +61,7 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-// add GET route to render the urls_new.ejs template
-// urls_new has form whose method is set to POST
-// The form has one named input, with the name attribute set to longURL
-// when the form is submitted, it will make a request to POST /urls, and the body will contain one URL-encoded name-value pair with the name longURL
-// data in the input field will be avaialbe to us in the req.body.longURL variable, which we can store in our urlDatabase object
+// get route to render the urls_new.ejs template
 app.get("/urls/new", (req, res) => {
   var id = req.cookies["username"];
   const templateVars = { user: users[id] };
@@ -112,8 +102,14 @@ app.post("/urls/:id", (req, res) => {
 
 // set name of cookie to username in login page
 app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username);
-  res.redirect("/urls");
+  const user = findUserObj(req.body.email, users);
+  console.log(user)
+  if (user && (req.body.password === user.password)) {
+    res.cookie("username", user.id);
+    res.redirect('/urls');
+  } else {
+    console.log('Please make sure you enter the correct username and password.');
+  }
 });
 
 // logout endpoint, clears cookie
@@ -124,11 +120,20 @@ app.post("/logout", (req, res) => {
 
 // add registration info to users object
 app.post("/register", (req, res) => {
-  let id = generateRandomString();
-  users[id] = { id: id };
-  users[id].email = req.body.email;
-  users[id].password = req.body.password;
-  return findUser()
-  res.cookie("username", id);
-  res.redirect("/urls");
+  if (req.body.email && req.body.password) {
+    if (!findEmail(req.body.email, users)) {
+      const id = generateRandomString();
+      users[id] = {
+        id,
+        email: req.body.email,
+        password: req.body.password
+      };
+      res.cookie("username", id);
+      res.redirect("/urls");
+    } else {
+      console.log('Email already registered');
+    }
+  } else {
+    console.log('Empty username or password');
+  }
 });
