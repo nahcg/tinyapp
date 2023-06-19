@@ -23,9 +23,11 @@
           </form>
         <% } else { %>
         <form method="POST" action="/login">
-            <input type="text" name="username" placeholder="username">
-            <button type="submit">Submit</button>
+            <button type="submit" class="btn btn-dark"><a href="/login">Login</a></button>
         </form>
+        <form method="POST" action="/register">
+          <button type="submit" class="btn btn-dark"><a href="/register">Register</a></button>
+      </form>
         <% } %>
       </div>
     </div>
