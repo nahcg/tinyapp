@@ -44,15 +44,24 @@ app.get("/hello", (req, res) => {
 app.get("/register", (req, res) => {
   var id = req.cookies["username"];
   const templateVars = { user: users[id] };
-  res.render("registration", templateVars);
+  if (id) {
+    res.redirect("/urls");
+  } else {
+    res.render("registration", templateVars);
+  }
 });
 
-// render login page
+// render login page if user logged in
 app.get("/login", (req, res) => {
   var id = req.cookies["username"];
   const templateVars = { user: users[id] };
-  res.render("login", templateVars);
+  if (id) {
+    res.redirect("/urls");
+  } else {
+    res.render("login", templateVars);
+  }
 });
+
 
 // route for /urls to render urls ejs template in views folder
 app.get("/urls", (req, res) => {
