@@ -1,5 +1,5 @@
-#TinyApp Project
-##Dependencies
+# TinyApp Project
+## Dependencies
 * Node.js
 * Express
 * EJS
