@@ -26,6 +26,15 @@ const findUserObj = (email, users) => {
   return undefined;
 };
 
+// returns unique urlDatabase object where only urls belonging to user id are there
+const urlsForUser = (id, urlDatabase) => {
+  const userUrls = {}
+  for (const key in urlDatabase) {
+    if (urlDatabase[key].userID === id) {
+      userUrls[key] = urlDatabase[key]
+    }
+  }
+  return userUrls;
+};
 
-
-module.exports = { generateRandomString, findUserObj, findEmail };
+module.exports = { generateRandomString, findUserObj, findEmail, urlsForUser };
