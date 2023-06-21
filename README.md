@@ -5,3 +5,4 @@
 * EJS
 * body-parser
 * cookie-session
+* bcryptjs
