@@ -8,19 +8,21 @@
       integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
       crossorigin="anonymous"
     />
-    <title>URL - TinyApp Example</title>
+    <title>URL - TinyApp to Shorten URLs</title>
   </head>
 
   <body>
     <%- include('partials/_header') %>
-    <div class="card text-center">
+    <div class="card text-left">
       <div class="card-body">
-        <h5 class="card-title">Register: </h5>
+        <h4 class="card-title">Register</h4>
         <form method="POST" action="/register">
           <label for="email">Email: </label> 
           <input type="email" name="email" placeholder="example@email.com">
+          <br>
           <label for="password">Password: </label> 
-          <input type="password" name="password" placeholder="*****">
+          <input type="password" name="password" placeholder="********">
+          <br>
           <button type="submit">Register</button>
         </form>
       </div>
