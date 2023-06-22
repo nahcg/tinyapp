@@ -13,7 +13,7 @@
 * install dependencies
 * run using `npm start`
 
-(/images/Register.png)
-(/images/Edit.png)
-(/images/Create.png)
-(/images/Urls.png)
+(https://github.com/nahcg/tinyapp/blob/master/images/Create.png)
+(https://github.com/nahcg/tinyapp/blob/master/images/Edit.png)
+(https://github.com/nahcg/tinyapp/blob/master/images/Create.png)
+(https://github.com/nahcg/tinyapp/blob/master/images/Urls.png)
