@@ -13,7 +13,7 @@
 * install dependencies
 * run using `npm start`
 
-(/tinyapp/Register.png)
-(/tinyapp/Edit.png)
-(/tinyapp/Create.png)
-(/tinyapp/Urls.png)
+(/images/Register.png)
+(/images/Edit.png)
+(/images/Create.png)
+(/images/Urls.png)
