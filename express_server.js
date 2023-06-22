@@ -81,7 +81,6 @@ app.get("/login", (req, res) => {
   } else {
     res.render("login", templateVars);
   }
-  console.log(users)
 });
 
 
@@ -170,14 +169,16 @@ app.post("/urls/:id", (req, res) => {
   }
 });
 
-// set name of cookie to username in login page
+// set name of cookie to username in login page if user and password match existing users
 app.post("/login", (req, res) => {
   const user = findUserObj(req.body.email, users);
   if (user && bcrypt.compareSync(req.body.password, user.password)) {
     req.session.userID = user.id;
     res.redirect('/urls');
-  } else {
-    return res.status(403).send('Please enter the correct username and password.');
+  } else if (!user) {
+    return res.status(403).send('User does not exist, please register');
+  } else if (!bcrypt.compareSync(req.body.password, user.password)) {
+    return res.status(403).send('Please enter the correct password.');
   }
 });
 
