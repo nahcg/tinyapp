@@ -54,15 +54,11 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-// sending HTML in response
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
 
 // render registration page
 app.get("/register", (req, res) => {
-  const templateVars = { 
-    user: users[req.session.userID] 
+  const templateVars = {
+    user: users[req.session.userID]
   };
   if (req.session.userID) {
     res.redirect("/urls");
@@ -73,7 +69,7 @@ app.get("/register", (req, res) => {
 
 // render login page if user logged in
 app.get("/login", (req, res) => {
-  const templateVars = { 
+  const templateVars = {
     user: users[req.session.userID]
   };
   if (req.session.userUD) {
@@ -99,8 +95,8 @@ app.get("/urls", (req, res) => {
 
 // get route to render the urls_new.ejs template
 app.get("/urls/new", (req, res) => {
-  const templateVars = { 
-    user: users[req.session.userID] 
+  const templateVars = {
+    user: users[req.session.userID]
   };
   if (!req.session.userID) {
     res.redirect("/login");
